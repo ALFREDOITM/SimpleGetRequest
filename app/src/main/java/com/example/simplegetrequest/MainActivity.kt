@@ -14,11 +14,13 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var queue: RequestQueue
+    private lateinit var binding: ActivityMainBinding
     lateinit var editText: EditText
     lateinit var button: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         queue = Volley.newRequestQueue(this)
         editText = findViewById(R.id.etPokemonAmount)
         button = findViewById(R.id.btnUpdatePokemon)
@@ -32,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         val url = "https://pokeapi.co/api/v2/pokemon/?limit=${listAmount}"
         val jsonRequest = JsonObjectRequest(url, Response.Listener<JSONObject>{ response ->
             Log.i("JSONRESPONSE", response.getJSONArray("results").toString())
+
+            binding.rvPokeEntries.adapter = MainAdapter(response.getJSONArray("results"))
         },
         Response.ErrorListener { error ->
             Log.w("JSONRESPONSE", error.message as String)
